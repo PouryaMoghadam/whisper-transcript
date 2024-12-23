@@ -46,7 +46,7 @@ loggers:
       - default
     level: INFO
     propagate: false
-  whisperX:
+  video-ai:
     handlers:
       - colored
     level: INFO

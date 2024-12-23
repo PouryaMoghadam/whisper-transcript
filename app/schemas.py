@@ -1,4 +1,3 @@
-"""This module contains the schema definitions for the WhisperX FastAPI application."""
 
 import os
 from datetime import datetime
