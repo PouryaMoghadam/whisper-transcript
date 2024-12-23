@@ -1,5 +1,6 @@
 import librosa
 import numpy as np
+import torch
 from datasets import Audio, Dataset
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
@@ -8,7 +9,7 @@ from app.utils.logger import logger
 
 LANG = Config.LANG
 WHISPER_MODEL = Config.WHISPER_MODEL
-device = Config.DEVICE
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 compute_type = Config.COMPUTE_TYPE
 
 
@@ -20,7 +21,6 @@ def transcribe_with_whisper(audio):
     )
 
     try:
-        # Check if the CACHE_DIR environment variable is set
         cache_dir_exists = False
         cache_dir = Config.CACHE_DIR
         model_id = WHISPER_MODEL
@@ -28,13 +28,11 @@ def transcribe_with_whisper(audio):
         if cache_dir:
             cache_dir_exists = True
 
-        # Load the processor
         if cache_dir_exists:
             processor = WhisperProcessor.from_pretrained(model_id, cache_dir=cache_dir)
         else:
             processor = WhisperProcessor.from_pretrained(model_id)
 
-        # Load the model
         if cache_dir_exists:
             model = WhisperForConditionalGeneration.from_pretrained(
                 model_id, cache_dir=cache_dir
@@ -42,19 +40,24 @@ def transcribe_with_whisper(audio):
         else:
             model = WhisperForConditionalGeneration.from_pretrained(model_id)
 
-        # Model configuration
+        model.to(device)
+
         forced_decoder_ids = processor.get_decoder_prompt_ids(
             language="en", task="transcribe"
         )
 
         model.config.forced_decoder_ids = forced_decoder_ids
 
-        if isinstance(audio, (list, np.ndarray)):
+        # If the input 'audio' is already a waveform, no need to load it again.
+        # We will directly proceed with creating the dataset.
+        if isinstance(audio, (list, np.ndarray)):  # Check if it's a waveform (list or ndarray)
             wavform = audio
-            sr = 16000
+            sr = 16000  # You can adjust the sample rate if needed
         else:
+            # If 'audio' is a path, use librosa to load the file
             wavform, sr = librosa.load(audio, sr=16000)
 
+        # Creating a dataset from the wavform
         audio_dataset = Dataset.from_dict(
             {
                 "audio": [
@@ -73,6 +76,8 @@ def transcribe_with_whisper(audio):
             sampling_rate=sample["sampling_rate"],
             return_tensors="pt",
         ).input_features
+
+        input_features = input_features.to(device)
 
         predicted_ids = model.generate(
             input_features, forced_decoder_ids=forced_decoder_ids
