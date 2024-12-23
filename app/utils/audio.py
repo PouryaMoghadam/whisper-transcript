@@ -23,7 +23,7 @@ def convert_video_to_audio(file):
             "16000",  # Sample rate of 16kHz
             "-f",
             "wav",  # Output format WAV
-            temp_filename,
+            f"{temp_filename}.wav",
         ]
     )
     return temp_filename
