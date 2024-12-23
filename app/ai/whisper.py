@@ -24,7 +24,7 @@ async def transcribe_with_whisper(
         # Check if the CACHE_DIR environment variable is set
         cache_dir_exists = False
         cache_dir = Config.CACHE_DIR
-        model_id = "openai/whisper-large-v3"
+        model_id = WHISPER_MODEL
 
         if cache_dir:
             cache_dir_exists = True
