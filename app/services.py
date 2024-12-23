@@ -8,7 +8,7 @@ from app.tasks import update_task_status_in_db
 from app.utils.logger import logger
 
 
-async def process_transcribe(
+def process_transcribe(
     audio,
     identifier,
     task_type: str,
@@ -19,7 +19,7 @@ async def process_transcribe(
         start_time = datetime.now()
         logger.info(f"Starting {task_type} task for identifier {identifier}")
         
-        result = await transcribe_with_whisper(audio)
+        result = transcribe_with_whisper(audio)
 
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()

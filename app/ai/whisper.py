@@ -12,7 +12,7 @@ device = Config.DEVICE
 compute_type = Config.COMPUTE_TYPE
 
 
-async def transcribe_with_whisper(audio):
+def transcribe_with_whisper(audio):
     logger.debug(
         "Starting transcription with Whisper model: %s on device: %s",
         WHISPER_MODEL,
@@ -68,7 +68,7 @@ async def transcribe_with_whisper(audio):
 
         sample = audio_dataset[0]["audio"]
 
-        input_features = await processor(
+        input_features = processor(
             sample["array"],
             sampling_rate=sample["sampling_rate"],
             return_tensors="pt",
@@ -77,7 +77,7 @@ async def transcribe_with_whisper(audio):
         predicted_ids = model.generate(
             input_features, forced_decoder_ids=forced_decoder_ids
         )
-        transcription = await processor.batch_decode(
+        transcription = processor.batch_decode(
             predicted_ids, skip_special_tokens=True
         )[0]
 
