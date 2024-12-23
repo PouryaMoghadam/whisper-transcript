@@ -1,4 +1,5 @@
 import librosa
+import numpy as np
 from datasets import Audio, Dataset
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
@@ -11,9 +12,7 @@ device = Config.DEVICE
 compute_type = Config.COMPUTE_TYPE
 
 
-async def transcribe_with_whisper(
-    audio,
-):
+async def transcribe_with_whisper(audio):
     logger.debug(
         "Starting transcription with Whisper model: %s on device: %s",
         WHISPER_MODEL,
@@ -40,7 +39,6 @@ async def transcribe_with_whisper(
             model = WhisperForConditionalGeneration.from_pretrained(
                 model_id, cache_dir=cache_dir
             )
-
         else:
             model = WhisperForConditionalGeneration.from_pretrained(model_id)
 
@@ -51,10 +49,12 @@ async def transcribe_with_whisper(
 
         model.config.forced_decoder_ids = forced_decoder_ids
 
-        # Converting the audio file to a wavform
-        wavform, sr = librosa.load(audio, sr=16000)
+        if isinstance(audio, (list, np.ndarray)):
+            wavform = audio
+            sr = 16000
+        else:
+            wavform, sr = librosa.load(audio, sr=16000)
 
-        # Creating a dataset from the wavform
         audio_dataset = Dataset.from_dict(
             {
                 "audio": [
