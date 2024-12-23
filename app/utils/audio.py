@@ -1,3 +1,4 @@
+import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
@@ -5,7 +6,7 @@ from whisper import load_audio
 from whisper.audio import SAMPLE_RATE
 
 from app.platform.config import Config
-from .files import check_file_extension
+from .files import AUDIO_EXTENSIONS
 
 
 def convert_video_to_audio(file):
@@ -29,8 +30,9 @@ def convert_video_to_audio(file):
     return temp_filename
 
 
-def process_audio_file(audio_file):
-    if not check_file_extension(audio_file, audio_only=True):
+def process_audio_file(audio_file, file_name):
+    file_extension = os.path.splitext(file_name)[1].lower()
+    if file_extension not in AUDIO_EXTENSIONS:
         audio_file = convert_video_to_audio(audio_file)
     return load_audio(audio_file)
 
