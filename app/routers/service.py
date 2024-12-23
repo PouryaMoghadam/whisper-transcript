@@ -19,7 +19,7 @@ service_router = APIRouter(prefix="/service")
 
 
 @service_router.post("/transcript", tags=["Speech-2-Text"])
-async def speech_to_text(
+def speech_to_text(
     background_tasks: BackgroundTasks,
     url: str = Form(...),
     session: Session = Depends(get_db_session),
@@ -46,7 +46,7 @@ async def speech_to_text(
     logger.info("File downloaded and saved temporarily: %s", temp_audio_file.name)
     validate_extension(temp_audio_file.name, ALLOWED_EXTENSIONS)
 
-    audio = await process_audio_file(temp_audio_file, temp_audio_file.name)
+    audio = process_audio_file(temp_audio_file, temp_audio_file.name)
     logger.info("Audio file processed: duration %s seconds", get_audio_duration(audio))
 
     identifier = add_task_to_db(

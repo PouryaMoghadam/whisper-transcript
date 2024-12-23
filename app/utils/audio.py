@@ -28,11 +28,11 @@ def convert_video_to_audio(file):
     return temp_filename
 
 
-async def process_audio_file(audio_file, file_name):
+def process_audio_file(audio_file, file_name):
     # file_extension = os.path.splitext(file_name)[1].lower()
     # if file_extension not in AUDIO_EXTENSIONS:
     #     audio_file = convert_video_to_audio(audio_file)
-    return await load_audio(audio_file)
+    return load_audio(file_name)
 
 
 def get_audio_duration(audio):
