@@ -1,0 +1,15 @@
+openapi: 3.1.0
+info:
+  title: VIDEO AI REST service
+  description: "\n    ## Supported file extensions:\n    AUDIO_EXTENSIONS = {'.ogg',\
+    \ '.aac', '.wav', '.mp3', '.oga', '.m4a', '.awb', '.wma', '.amr'}\n    VIDEO_EXTENSIONS\
+    \ = {'.mp4', '.avi', '.mov', '.mkv', '.wmv'}\n    "
+  version: 0.0.1
+paths: {}
+tags:
+- name: Speech-2-Text
+  description: Operations related to transcript
+- name: Speech-2-Text services
+  description: Individual services for transcript
+- name: Tasks Management
+  description: Manage tasks.
