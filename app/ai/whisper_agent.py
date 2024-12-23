@@ -1,3 +1,4 @@
+import threading
 from concurrent.futures import ThreadPoolExecutor
 
 import torch
@@ -11,15 +12,19 @@ WHISPER_MODEL = Config.WHISPER_MODEL
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # Ensure using GPU if available
 cache_dir = Config.CACHE_DIR  # Cache directory for caching models
 
-model = None
 executor = ThreadPoolExecutor(max_workers=2)
+
+model = None
+model_lock = threading.Lock()
 
 def load_model():
     global model
     if model is None:
-        logger.debug(f"Loading model {WHISPER_MODEL} on device: {device}")
-        model = whisper.load_model(WHISPER_MODEL, device=device)
-        logger.debug(f"Model {WHISPER_MODEL} loaded successfully")
+        with model_lock:  # Ensure thread safety while loading the model
+            if model is None:  # Double-check if model is still not loaded
+                logger.debug(f"Loading model {WHISPER_MODEL} on device: {device}")
+                model = whisper.load_model(WHISPER_MODEL, device=device)
+                logger.debug(f"Model {WHISPER_MODEL} loaded successfully")
     return model
 
 def transcribe_with_whisper(audio):
