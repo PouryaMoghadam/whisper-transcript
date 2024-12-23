@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.ai.whisper import transcribe_with_whisper
+from app.ai.whisper_agent import transcribe_with_whisper
 from app.tasks import update_task_status_in_db
 from app.utils.logger import logger
 
