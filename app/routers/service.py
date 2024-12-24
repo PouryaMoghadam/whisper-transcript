@@ -21,7 +21,7 @@ service_router = APIRouter(prefix="/service")
 @service_router.post("/transcript", tags=["Speech-2-Text"])
 def speech_to_text(
     background_tasks: BackgroundTasks,
-    lang: str,
+    lang: str = Form(...),
     url: str = Form(...),
     session: Session = Depends(get_db_session),
 ) -> Response:
