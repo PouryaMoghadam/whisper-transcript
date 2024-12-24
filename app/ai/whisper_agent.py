@@ -11,7 +11,7 @@ WHISPER_MODEL = Config.WHISPER_MODEL
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 cache_dir = Config.CACHE_DIR
 
-executor = ThreadPoolExecutor(max_workers=2)
+executor = ThreadPoolExecutor(max_workers=1)
 
 model = None
 model_lock = threading.Lock()
