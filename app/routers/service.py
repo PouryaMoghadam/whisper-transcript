@@ -21,6 +21,7 @@ service_router = APIRouter(prefix="/service")
 @service_router.post("/transcript", tags=["Speech-2-Text"])
 def speech_to_text(
     background_tasks: BackgroundTasks,
+    lang: str,
     url: str = Form(...),
     session: Session = Depends(get_db_session),
 ) -> Response:
@@ -53,7 +54,7 @@ def speech_to_text(
         status="processing",
         file_name=temp_audio_file.name,
         audio_duration=get_audio_duration(audio),
-        language="en",
+        language=lang,
         task_type="transcription",
         task_params={
             "url": url,
@@ -63,7 +64,7 @@ def speech_to_text(
     )
 
     background_tasks.add_task(
-        process_transcribe, audio, identifier, "transcription", session
+        process_transcribe, audio, identifier, "transcription", lang, session
     )
 
     logger.info("Background task scheduled for processing: ID %s", identifier)

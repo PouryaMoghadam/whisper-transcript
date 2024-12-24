@@ -12,14 +12,16 @@ def process_transcribe(
     audio,
     identifier,
     task_type: str,
+    lang: str,
     session: Session,
     *args,
 ):
     try:
         start_time = datetime.now()
         logger.info(f"Starting {task_type} task for identifier {identifier}")
-        
-        result = handle_transcription_request(audio)
+
+
+        result = handle_transcription_request(audio, lang)
 
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
