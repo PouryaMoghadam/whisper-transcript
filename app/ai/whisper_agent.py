@@ -39,6 +39,7 @@ def transcribe_with_whisper(audio, lang):
         result = processor_model.transcribe(audio, language=lang, fp16=True)
 
         logger.debug("Completed transcription")
+        print(result['text'])
         return result['text']
 
     except Exception as error:
