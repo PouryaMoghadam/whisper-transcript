@@ -24,6 +24,8 @@ def load_model():
                 logger.debug(f"Loading model {WHISPER_MODEL} on device: {device}")
                 model = whisper.load_model(WHISPER_MODEL, device=device)
                 logger.debug(f"Model {WHISPER_MODEL} loaded successfully")
+            else:
+                logger.debug(f"Model {WHISPER_MODEL} already loaded")
     return model
 
 def transcribe_with_whisper(audio, lang):
@@ -36,7 +38,7 @@ def transcribe_with_whisper(audio, lang):
     try:
         processor_model = load_model()
 
-        result = processor_model.transcribe(audio, language=lang, fp16=True)
+        result = processor_model.transcribe(audio, language=lang, fp16=False)
 
         logger.debug("Completed transcription")
         print(result['text'])
@@ -47,9 +49,8 @@ def transcribe_with_whisper(audio, lang):
         return f"Server Error"
 
 def handle_transcription_request(audio, lang):
-    """
-    This function will be called for each API request.
-    Each API call will handle a separate transcription request.
-    """
+    logger.debug(f"Handling transcription request for audio: {audio} and language: {lang}")
     future = executor.submit(transcribe_with_whisper, audio, lang)
-    return future.result()
+    result = future.result()
+    logger.debug(f"Transcription result for request: {result}")
+    return result
