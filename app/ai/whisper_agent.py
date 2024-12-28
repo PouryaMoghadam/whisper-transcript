@@ -29,11 +29,9 @@ def load_model():
     return model
 
 def transcribe_with_whisper(audio, lang):
-    logger.debug(
-        "Starting transcription with Whisper model: %s on device: %s",
-        WHISPER_MODEL,
-        device,
-    )
+    logger.debug("Starting transcription process...")
+    logger.debug(f"Audio file: {audio}")
+    logger.debug(f"Language: {lang}")
 
     try:
         processor_model = load_model()
